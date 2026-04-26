@@ -30,6 +30,6 @@ if prompt := st.chat_input():
     msg = response.choices[0].message.content
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant").write(msg)
-    file_uploader = st.file_uploader("Choose a file")
+    uploaded_file = st.file_uploader("Choose a file")
     if uploaded_file is not None:
         stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
