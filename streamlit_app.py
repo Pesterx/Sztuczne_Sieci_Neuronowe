@@ -1,6 +1,10 @@
 import streamlit as st
 from openai import OpenAI
 import fitz
+import faiss
+from langchain_huggingface import HuggingFaceEmbeddings          
+from langchain_community.vectorstores import FAISS               
+from langchain.schema import Document
 from io import StringIO
 import os
 
@@ -9,6 +13,27 @@ st.title("Gemini chatbot app")
 
 api_key, base_url = st.secrets["API_KEY"], st.secrets["BASE_URL"]
 selected_model = "gemini-2.5-flash"
+
+embed_model_id = "sentence-transformers/all-MiniLM-L6-v2"  # lekki, dobry jakościowo
+model_kwargs   = {"device": "cpu", "trust_remote_code": True}
+embeddings     = HuggingFaceEmbeddings(
+    model_name=embed_model_id,
+    model_kwargs=model_kwargs
+)
+
+
+def create_index(documents):
+    embeddings = ... #wybor modelu
+    texts = ... #wartosci tekstowe wszystkich dokumentów
+    metadata = ... #metadata wszystkich dokumentów czyli slownik {filename:...}
+
+    embeddings_matrix = [embeddings.embed_query(text) for text in texts]
+    embeddings_matrix = np.array(embeddings_matrix).astype("float32")
+
+    #index = faiss. ... #ustawienie indexu przeszukania
+    index.add(embeddings_matrix)
+
+    return FAISSIndex(index, metadata)
 
 def load_pdf(file_path):
     doc=fitz.open(file_path)
