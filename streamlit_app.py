@@ -29,4 +29,4 @@ if prompt := st.chat_input():
     msg = response.choices[0].message.content
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant").write(msg)
-    file_uploader = st.file.uploader
+    file_uploader = st.file.uploader("Choose a file")
