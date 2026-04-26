@@ -18,7 +18,10 @@ if prompt := st.chat_input():
     if not api_key:
         st.info("Invalid API key.")
         st.stop()
-    client = ...
+    client = client.responses.create(
+    instructions="You are a chat bot.",
+    input=prompt,
+)
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
     response = ...
