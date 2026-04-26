@@ -1,5 +1,6 @@
 import streamlit as st
 from openai import OpenAI
+import fitz
 from io import StringIO
 import os
 
@@ -8,6 +9,22 @@ st.title("Gemini chatbot app")
 
 api_key, base_url = st.secrets["API_KEY"], st.secrets["BASE_URL"]
 selected_model = "gemini-2.5-flash"
+
+def load_pdf(file_path):
+    doc=fitz.open(file_path)
+    text=""
+    for page in doc:
+        text += page.get_text()
+    doc.close()
+    return text
+
+def load_documents_from_folder(folder_path):
+    documents = []
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".pdf"):
+            text = load_pdf(os.path.join(folder_path, filename))
+            documents.append({"filename": filename, "text": text})
+        return documents
 
 with st.sidebar:
     uploaded_file = st.file_uploader("Choose a file")
