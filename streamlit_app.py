@@ -27,10 +27,13 @@ def load_documents_from_folder(folder_path):
         return documents
 
 with st.sidebar:
-    uploaded_file = st.file_uploader("Choose a file")
+    uploaded_file = st.file_uploader("Choose a file", type="pdf")
     if uploaded_file is not None:
-        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
-        file_content = stringio.read()
+        doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+        file_content = ""
+        for page in doc:
+            file_content += page.get_text()
+        doc.close()
         st.success(f"Wczytano: {uploaded_file.name}")
 
 if "messages" not in st.session_state:
