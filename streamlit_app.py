@@ -1,5 +1,6 @@
 import streamlit as st
 from openai import OpenAI
+from io import StringIO
 import os
 
 st.set_page_config(layout="wide", page_title="Gemini chatbot app")
@@ -30,3 +31,5 @@ if prompt := st.chat_input():
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant").write(msg)
     file_uploader = st.file.uploader("Choose a file")
+    if uploaded_file is not None:
+        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
