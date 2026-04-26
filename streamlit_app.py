@@ -35,6 +35,8 @@ with st.sidebar:
             file_content += page.get_text()
         doc.close()
         st.success(f"Wczytano: {uploaded_file.name}")
+        st.success(f"Tekst: {file_content}")
+
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?."}]
