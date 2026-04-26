@@ -9,6 +9,13 @@ st.title("Gemini chatbot app")
 api_key, base_url = st.secrets["API_KEY"], st.secrets["BASE_URL"]
 selected_model = "gemini-2.5-flash"
 
+with st.sidebar:
+    uploaded_file = st.file_uploader("Choose a file")
+    if uploaded_file is not None:
+        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        file_content = stringio.read()
+        st.success(f"Wczytano: {uploaded_file.name}")
+
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?."}]
 
@@ -30,6 +37,4 @@ if prompt := st.chat_input():
     msg = response.choices[0].message.content
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant").write(msg)
-    uploaded_file = st.file_uploader("Choose a file")
-    if uploaded_file is not None:
-        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+
