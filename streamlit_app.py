@@ -42,7 +42,7 @@ def create_index(documents):
     embeddings_matrix = [embeddings.embed_query(text) for text in texts]
     embeddings_matrix = np.array(embeddings_matrix).astype("float32")
 
-    index = faiss.indexFlatL2(embeddings_matrix.shape[1])# ustawienie indeksu przeszukwania
+    index = faiss.IndexFlatL2(embeddings_matrix.shape[1])# ustawienie indeksu przeszukwania
     index.add(embeddings_matrix)
 
     return FAISSIndex(index, metadata)
