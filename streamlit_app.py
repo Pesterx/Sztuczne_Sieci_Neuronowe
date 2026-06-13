@@ -36,7 +36,6 @@ class FAISSIndex:
 
 
 def create_index(documents):
-    embeddings = embeddings # załadowanie modelu embeddingowego
     texts = [doc["text"] for doc in documents] # wartości tekstowe wszystkich dokumentów
     metadata = [{"filename": doc["filename"], "text": doc["text"]} for doc in documents] # metadane wszystkich dokumentów, czyli słownik {filename:... , text:...}
 
@@ -49,7 +48,6 @@ def create_index(documents):
     return FAISSIndex(index, metadata)
 
 def retrieve_docs(query, faiss_index, k=3):
-    embeddings = embeddings # załadowanie modelu embeddingowego
     query_embedding = np.array([embeddings.embed_query(query)]).astype("float32") # embeddowanie zapytania (query)
     results = faiss_index.similarity_search(query_embedding, k) # zwrócenie wyników przeuszkiwania
     return results
