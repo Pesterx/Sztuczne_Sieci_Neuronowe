@@ -4,7 +4,7 @@ import fitz
 import faiss
 from langchain_huggingface import HuggingFaceEmbeddings          
 from langchain_community.vectorstores import FAISS               
-from langchain.schema import Document
+from langchain_core.documents import Document as Document
 from io import StringIO
 import os
 
