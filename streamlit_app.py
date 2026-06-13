@@ -2,6 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import fitz
 import faiss
+import numpy as np
 from langchain_huggingface import HuggingFaceEmbeddings          
 from langchain_community.vectorstores import FAISS               
 from langchain_core.documents import Document as Document
@@ -21,19 +22,37 @@ embeddings     = HuggingFaceEmbeddings(
     model_kwargs=model_kwargs
 )
 
+class FAISSIndex:
+    def __init__(self, faiss_index, metadata):
+        self.index = faiss_index
+        self.metadata = metadata
+
+    def similarity_search(self, query, k=3):
+        D, I = self.index.search(query, k)
+        results = []
+        for idx in I[0]:
+            results.append(self.metadata[idx])
+        return results
+
 
 def create_index(documents):
-    embeddings = ... #wybor modelu
-    texts = ... #wartosci tekstowe wszystkich dokumentów
-    metadata = ... #metadata wszystkich dokumentów czyli slownik {filename:...}
+    embeddings = embeddings # załadowanie modelu embeddingowego
+    texts = [doc["text"] for doc in documents] # wartości tekstowe wszystkich dokumentów
+    metadata = [{"filename": doc["filename"], "text": doc["text"]} for doc in documents] # metadane wszystkich dokumentów, czyli słownik {filename:... , text:...}
 
     embeddings_matrix = [embeddings.embed_query(text) for text in texts]
     embeddings_matrix = np.array(embeddings_matrix).astype("float32")
 
-    #index = faiss. ... #ustawienie indexu przeszukania
+    index = faiss.indexFlatL2(embeddings_matrix.shape[1])# ustawienie indeksu przeszukwania
     index.add(embeddings_matrix)
 
     return FAISSIndex(index, metadata)
+
+def retrieve_docs(query, faiss_index, k=3):
+    embeddings = embeddings # załadowanie modelu embeddingowego
+    query_embedding = np.array([embeddings.embed_query(query)]).astype("float32") # embeddowanie zapytania (query)
+    results = faiss_index.similarity_search(query_embedding, k) # zwrócenie wyników przeuszkiwania
+    return results
 
 def load_pdf(file_path):
     doc=fitz.open(file_path)
@@ -59,6 +78,8 @@ with st.sidebar:
         for page in doc:
             file_content += page.get_text()
         doc.close()
+        documents = [{"filename": uploaded_file.name, "text": file_content}]
+        st.session_state["faiss_index"] = create_index(documents)
         st.success(f"Wczytano: {uploaded_file.name}")
         st.success(f"Tekst: {file_content}")
 
