@@ -97,7 +97,7 @@ if prompt := st.chat_input():
     st.chat_message("user").write(prompt)
 
     messages_to_send = st.session_state.messages.copy()
-    if "faiss_index" in st.session.state:
+    if "faiss_index" in st.session_state:
         results = retrieve_docs(prompt, st.session_state["faiss_index"])
         context = "\n\n".join([r["text"] for r in results])
         messages_to_send.insert(0, {
